@@ -1,0 +1,210 @@
+Layout XML:
+
+xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+-LinearLayout: Um layout que organiza os elementos em uma única coluna (vertical).
+
+-xmlns:android: Define o espaço de nomes padrão para atributos XML da Android.
+
+-android:layout_width="match_parent" e android:layout_height="match_parent": O layout ocupará toda a largura e altura da tela.
+
+-android:orientation="vertical": Os elementos serão organizados verticalmente.
+
+-android:padding="16dp": Adiciona um preenchimento de 16dp ao redor do layout.
+
+
+
+xml
+    <EditText
+        android:id="@+id/editTextPeso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Peso (Kg)"
+        android:inputType="numberDecimal" />
+
+
+-EditText: Campo de entrada de texto.
+
+-android:id="@+id/editTextPeso": ID único para referenciar este campo no código.
+
+-android:layout_width="match_parent": O campo ocupará toda a largura disponível.
+
+-android:layout_height="wrap_content": A altura se ajustará ao conteúdo.
+
+-android:hint="Peso (Kg)": Texto sugestivo que aparece quando o campo está vazio.
+
+-android:inputType="numberDecimal": Define o tipo de entrada como número decimal.
+
+
+
+xml
+    <EditText
+        android:id="@+id/editTextDistancia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Distância (Km)"
+        android:inputType="numberDecimal" />
+
+
+-Similar ao campo de peso, mas para a distância.
+
+
+
+xml
+    <Button
+        android:id="@+id/buttonCalcular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Calcular Frete" />
+
+
+-Button: Botão que o usuário clica para calcular o frete.
+
+-android:id="@+id/buttonCalcular": ID único para referenciar este botão no código.
+
+-android:text="Calcular Frete": Texto que será exibido no botão.
+
+
+
+xml
+    <TextView
+        android:id="@+id/textViewResultado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Resultado:"
+        android:paddingTop="16dp" />
+</LinearLayout>
+
+
+-TextView: Área de texto onde o resultado será mostrado.
+
+-android:id="@+id/textViewResultado": ID único para referenciar este campo no código.
+
+-android:text="Resultado:": Texto inicial que será exibido.
+
+-android:paddingTop="16dp": Espaço superior para separar do botão.
+
+
+
+Código Java:
+
+java
+package com.example.calculofrete;
+
+-Define o pacote do aplicativo.
+
+java
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+
+-Importa as bibliotecas necessárias para o funcionamento do aplicativo.
+
+java
+public class MainActivity extends AppCompatActivity {
+
+
+-Declara a classe principal da aplicação que estende AppCompatActivity.
+
+java
+    private EditText editTextPeso;
+    private EditText editTextDistancia;
+    private Button buttonCalcular;
+    private TextView textViewResultado;
+
+
+-Declaração dos componentes visuais.
+
+
+java
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+-onCreate: Método chamado quando a atividade é criada.
+-setContentView: Define o layout da atividade a partir do XML.
+
+java
+        editTextPeso = findViewById(R.id.editTextPeso);
+        editTextDistancia = findViewById(R.id.editTextDistancia);
+        buttonCalcular = findViewById(R.id.buttonCalcular);
+        textViewResultado = findViewById(R.id.textViewResultado);
+
+
+-findViewById: Associa os IDs dos componentes XML às variáveis Java.
+
+java
+        buttonCalcular.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calcularFrete();
+            }
+        });
+    }
+
+
+-Define a ação ao clicar no botão: chama o método calcularFrete.
+
+java
+    private void calcularFrete() {
+        String pesoStr = editTextPeso.getText().toString();
+        String distanciaStr = editTextDistancia.getText().toString();
+
+        if (pesoStr.isEmpty() || distanciaStr.isEmpty()) {
+            Toast.makeText(this, "Por favor, insira valores válidos.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+-calcularFrete(): Método para calcular o frete.
+-Obtém os valores de peso e distância como strings.
+-Verifica se os campos estão vazios e mostra um Toast se necessário.
+
+java
+        double peso = Double.parseDouble(pesoStr);
+        double distancia = Double.parseDouble(distanciaStr);
+        double valorPeso;
+        double valorKm;
+
+        if (peso <= 25.0) {
+            valorPeso = 2.0;
+            valorKm = 1.0;
+        } else if (peso <= 50.0) {
+            valorPeso = 2.25;
+            valorKm = 1.25;
+        } else if (peso <= 75.0) {
+            valorPeso = 2.5;
+            valorKm = 1.5;
+        } else {
+            valorPeso = 3.0;
+            valorKm = 2.0;
+        }
+
+
+-Converte as strings para double.
+-Define os valores para valorPeso e valorKm de acordo com a faixa de peso.
+
+
+java
+        double valorFrete = (distancia * valorKm) + (peso * valorPeso);
+        textViewResultado.setText("Valor do frete: R$ " + String.format("%.2f", valorFrete));
+    }
+}
+
+
+-Calcula o valor do frete com base na fórmula fornecida.
+-Exibe o resultado no TextView.
